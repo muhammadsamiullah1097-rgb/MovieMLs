@@ -31,32 +31,8 @@ Open this project folder in VS Code, open the terminal, and run:
 
 ```powershell
 cd backend
-```
-
-### 2. Create a virtual environment (recommended)
-
-```powershell
-py -m venv .venv
-.venv\Scripts\Activate.ps1
-```
-
-If PowerShell blocks activation, use Command Prompt instead:
-
-```cmd
-.venv\Scripts\activate.bat
-```
-
-### 3. Install libraries
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-### 4. Start the backend
-
-The ZIP already contains the four CSV files and three reference models in `data/raw/` and `artifacts/`. **You do not need to run model training for the first launch.** Start the website directly:
-
-```powershell
+pip install -r requirements.txt
+python train_models.py
 python -m uvicorn app.main:app --reload
 ```
 

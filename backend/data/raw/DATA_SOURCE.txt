@@ -1,0 +1,10 @@
+Dataset: The Movies Dataset
+Kaggle: https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset
+
+Included source CSV files:
+- movies_metadata.csv
+- ratings_small.csv
+- keywords.csv
+- links_small.csv
+
+The project uses these four original Kaggle CSV files. The large ratings.csv and credits.csv files from the archive are not required by the implemented modules and are not bundled.

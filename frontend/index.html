@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieLens ML Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">M</div><div><strong>MOVIE<span>ML</span></strong><small>MACHINE LEARNING STUDIO</small></div></div>
+      <div class="side-label">WORKSPACE</div>
+      <button class="nav active" data-view="studio"><span class="nav-icon">▦</span> Model Studio</button>
+      <button class="nav" data-view="preprocessing"><span class="nav-icon">◈</span> Data Preparation</button>
+      <button class="nav" data-view="features"><span class="nav-icon">⌘</span> Feature Analysis</button>
+      <button class="nav" data-view="recommend"><span class="nav-icon">✦</span> Movie Recommender</button>
+      <button class="nav" data-view="datasets"><span class="nav-icon">▤</span> Dataset Files</button>
+      <div class="sidebar-bottom"><span class="status-dot"></span><span id="apiStatus">Checking API...</span></div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div><span class="eyebrow">THE MOVIES DATASET · KAGGLE</span><h1 id="pageTitle">Model Studio</h1></div>
+        <div class="top-right"><span class="pill"><i></i> LOCAL API</span><div class="avatar">ML</div></div>
+      </header>
+
+      <section id="studioView" class="view active">
+        <div class="hero">
+          <div class="hero-copy"><span class="hero-tag">MIDTERM PROJECT · MACHINE LEARNING</span><h2>Explore movies.<br><em>Train models.</em></h2><p>Run classification, regression and text models on real Kaggle movie data. Compare results on an unseen test set.</p><div class="hero-stats"><div><strong id="movieCount">—</strong><span>MOVIES</span></div><div><strong id="ratingCount">—</strong><span>USER RATINGS</span></div><div><strong>22</strong><span>ML MODELS</span></div></div></div>
+          <div class="hero-art"><div class="poster poster-one"><span>01</span><b>DATA</b></div><div class="poster poster-two"><span>02</span><b>MODEL</b></div><div class="poster poster-three"><span>03</span><b>RESULT</b></div><div class="art-orbit"></div></div>
+        </div>
+
+        <div class="section-heading"><div><span class="eyebrow">EXPERIMENT CONFIGURATION</span><h2>Build an experiment</h2></div><span class="muted">Fixed random seed · 42</span></div>
+        <div class="workspace-grid">
+          <div class="panel control-panel">
+            <div class="field"><label for="taskSelect">ML TASK</label><select id="taskSelect"><option value="classification">Classification · Rating tier</option><option value="regression">Regression · Movie rating</option><option value="text">Text classification · Genre</option></select><small id="taskHint">Predict whether a movie is Low, Medium or High rated.</small></div>
+            <div class="field"><label for="modelSelect">ALGORITHM</label><select id="modelSelect"></select></div>
+            <div class="field"><label for="targetSelect">TARGET</label><select id="targetSelect"><option value="rating_tier">Rating tier (from vote_average)</option></select></div>
+            <div class="field"><label for="testSize">TEST DATA SIZE</label><div class="range-row"><input type="range" id="testSize" min="10" max="40" step="5" value="20"><strong id="testSizeLabel">20%</strong></div></div>
+            <div class="field" id="scalerField"><label for="scalerSelect">NUMERIC SCALING</label><select id="scalerSelect"><option value="standard">Standard Scaler</option><option value="minmax">Min-Max Scaler</option><option value="robust">Robust Scaler</option></select></div>
+            <label class="check-row" id="smoteRow"><input type="checkbox" id="smoteToggle"><span><strong>Apply SMOTE</strong><small>Training data only · can improve minority-tier recall</small></span></label>
+            <div class="button-row"><button id="runBtn" class="primary-btn">Run selected model <span>→</span></button><button id="compareBtn" class="secondary-btn">Compare all</button></div>
+            <div id="runStatus" class="status-message"></div>
+          </div>
+
+          <div class="panel results-panel">
+            <div class="panel-head"><div><span class="eyebrow">MODEL OUTPUT</span><h3 id="resultTitle">Awaiting experiment</h3></div><span class="result-state" id="resultState">READY</span></div>
+            <div id="emptyState" class="empty-state"><div class="empty-icon">◌</div><h3>Your results will appear here</h3><p>Choose a task and an algorithm, then run the model.</p></div>
+            <div id="resultContent" class="hidden"><div id="metricGrid" class="metric-grid"></div><div id="confusionWrap" class="confusion-wrap hidden"></div><div class="result-meta" id="resultMeta"></div><div class="result-subhead"><h4>Held-out predictions</h4><span>First 15 test rows</span></div><div class="table-wrap"><table><thead id="previewHead"></thead><tbody id="previewBody"></tbody></table></div><div id="resultNote" class="result-note"></div></div>
+            <div id="compareContent" class="hidden"><div class="result-subhead"><h4>Model comparison</h4><span id="compareMetric"></span></div><div class="table-wrap"><table><thead><tr><th>#</th><th>Model</th><th>Score</th><th>Seconds</th></tr></thead><tbody id="compareBody"></tbody></table></div><div id="bestModel" class="best-model"></div><div id="compareErrors" class="result-note"></div></div>
+          </div>
+        </div>
+        <div class="module-strip"><div><span class="eyebrow">AVAILABLE MODULES</span><h3>All techniques in one place</h3></div><div class="module-tags"><span>Classification</span><span>Regression</span><span>Ensembles</span><span>SVM</span><span>Naive Bayes</span><span>TF-IDF</span><span>SMOTE</span><span>RFE</span><span>PCA</span></div></div>
+      </section>
+
+      <section id="preprocessingView" class="view">
+        <div class="section-heading"><div><span class="eyebrow">DATA QUALITY & TRANSFORMATION</span><h2>Data preparation</h2><p class="muted">Check missing values, duplicate rows and the model-ready dataset.</p></div><button class="secondary-btn" id="refreshPrep">Refresh report ↻</button></div>
+        <div id="prepCards" class="stat-grid"></div>
+        <div class="panel"><div class="panel-head"><div><span class="eyebrow">DATA QUALITY</span><h3>Missing values by column</h3></div><span class="muted">Original Kaggle metadata</span></div><div class="table-wrap"><table><thead><tr><th>Column</th><th>Missing values</th></tr></thead><tbody id="missingBody"></tbody></table></div></div>
+        <div class="panel"><div class="panel-head"><div><span class="eyebrow">DATA PREVIEW</span><h3>Movie records</h3></div><span class="muted">First 8 rows</span></div><div class="table-wrap"><table><thead id="prepHead"></thead><tbody id="prepBody"></tbody></table></div></div>
+      </section>
+
+      <section id="featuresView" class="view">
+        <div class="section-heading"><div><span class="eyebrow">FEATURE ENGINEERING</span><h2>Feature analysis</h2><p class="muted">Recursive Feature Elimination (RFE) and Principal Component Analysis (PCA).</p></div><button class="primary-btn" id="runFeatures">Run feature analysis →</button></div>
+        <div id="featureOutput" class="feature-grid"><div class="panel empty-state"><div class="empty-icon">⌘</div><h3>Explore movie features</h3><p>RFE ranks useful input features. PCA summarizes numeric features into two components.</p></div></div>
+      </section>
+
+      <section id="recommendView" class="view">
+        <div class="section-heading"><div><span class="eyebrow">MOVIE DISCOVERY</span><h2>Movie recommender</h2><p class="muted">Two recommendation methods trained from the supplied Kaggle data.</p></div></div>
+        <div class="recommend-grid">
+          <div class="panel recommend-panel"><div class="recommend-icon">✦</div><span class="eyebrow">CONTENT-BASED FILTERING</span><h3>Find movies like a movie</h3><p>Compare movie titles, descriptions, genres and keyword tags using TF-IDF similarity.</p><div class="field"><label for="movieTitle">MOVIE TITLE</label><input type="text" id="movieTitle" placeholder="Example: Toy Story" autocomplete="off"><div id="movieSuggestions" class="suggestions"></div></div><button id="contentBtn" class="primary-btn full-btn">Find similar movies →</button></div>
+          <div class="panel recommend-panel"><div class="recommend-icon">◎</div><span class="eyebrow">COLLABORATIVE FILTERING</span><h3>Personalised suggestions</h3><p>Use real MovieLens user ratings to find movies liked by users with similar rating patterns.</p><div class="field"><label for="userId">MOVIELENS USER ID</label><input type="number" id="userId" min="1" max="671" value="1" placeholder="Enter 1 to 671"><small>User IDs are from the included ratings_small.csv.</small></div><button id="collabBtn" class="primary-btn full-btn">Recommend for this user →</button></div>
+        </div>
+        <div id="recommendStatus" class="status-message"></div>
+        <div id="recommendOutput" class="recommend-output"></div>
+      </section>
+
+      <section id="datasetsView" class="view">
+        <div class="section-heading"><div><span class="eyebrow">KAGGLE DATA SOURCE</span><h2>Dataset files</h2><p class="muted">The project uses four CSV files from The Movies Dataset.</p></div><a class="text-link" href="https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset" target="_blank" rel="noreferrer">Open Kaggle dataset ↗</a></div>
+        <div class="dataset-banner"><div class="dataset-symbol">CSV</div><div><span class="eyebrow">DATASET</span><h3>The Movies Dataset</h3><p>Movie metadata, genres, keywords and user ratings for the recommendation modules.</p></div><div class="dataset-total"><strong id="datasetMovieCount">—</strong><span>MOVIE RECORDS</span></div></div>
+        <div id="datasetFiles" class="file-grid"></div>
+        <div class="panel source-note"><h3>How the data is used</h3><p><strong>Classification:</strong> predict a Low, Medium or High rating tier from metadata. The target is derived from the source's vote_average column.</p><p><strong>Regression:</strong> predict the numeric vote_average value.</p><p><strong>Text classification:</strong> predict the primary genre from the movie overview text.</p><p><strong>Recommendation:</strong> content-based TF-IDF uses movie descriptions and keywords. Collaborative filtering uses MovieLens user ratings and the links_small ID map.</p><p class="muted">The large ratings.csv and credits.csv files are not needed for these modules; ratings_small.csv is used to keep the project lightweight.</p></div>
+      </section>
+      <footer><span>MOVIEML STUDIO</span><span>Student machine learning project · FastAPI backend</span></footer>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
